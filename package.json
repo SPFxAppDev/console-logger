@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SimpleBase/console-logger.git"
+    "url": "git+https://github.com/SPFxAppDev/console-logger.git"
   },
   "keywords": [
     "jslogger",
@@ -26,9 +26,9 @@
   "author": "Seryoga",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/SimpleBase/console-logger/issues"
+    "url": "https://github.com/SPFxAppDev/console-logger/issues"
   },
-  "homepage": "https://github.com/SimpleBase/console-logger#readme",
+  "homepage": "https://github.com/SPFxAppDev/console-logger#readme",
   "devDependencies": {
     "typescript": "^4.3.5"
   }

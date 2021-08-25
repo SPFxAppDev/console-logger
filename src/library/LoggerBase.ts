@@ -8,7 +8,7 @@ import { ILogger } from './ILogger';
 */
 export abstract class LoggerBase implements ILogger {
 
-    protected logger: Logger;
+    public logger: Logger;
 
     constructor() {
         this.assignLogger();
