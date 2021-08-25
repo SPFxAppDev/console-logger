@@ -11,7 +11,7 @@ With this small and simple library, you can better manage your console logging. 
 1. import the logger class into your project
 
 ```typescript
-import { Logger } from '@spfxappdev/logger';
+import { Logger, ILoggerSettings } from '@spfxappdev/logger';
 ```
 
 2. You can now create an instance. The first parameter is the category of the logger instance. It will be appended to all log outputs.
@@ -131,7 +131,7 @@ Import:
 
 ```typescript
 import { log } from '@spfxappdev/logger';
-import { ILogger } from '@spfxappdev/logger/library/ILogger';
+import { ILogger } from '@spfxappdev/logger/lib/library/ILogger';
 ```
 
 ####  Class Decorator

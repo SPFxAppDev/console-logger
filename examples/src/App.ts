@@ -1,8 +1,9 @@
-// import { Logger } from 'typescript-console-logger';
-import { Logger, ILoggerSettings } from '../../src/index';
-import { log } from '../../src/library/decorators/logFactory.decorators';
-import { LoggerBase } from '../../src/library/LoggerBase';
-import { ILogger } from '../../src/library/ILogger';
+import { Logger, ILoggerSettings, log } from '@spfxappdev/logger';
+import { ILogger } from '@spfxappdev/logger/lib/library/ILogger';
+// import { Logger, ILoggerSettings } from '../../src/index';
+// import { log } from '../../src/library/decorators/logFactory.decorators';
+// import { LoggerBase } from '../../src/library/LoggerBase';
+// import { ILogger } from '../../src/library/ILogger';
 
 class TestApp {
     private logger: Logger;

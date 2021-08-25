@@ -117,7 +117,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"../../src/functions/library/isset.ts":[function(require,module,exports) {
+})({"../node_modules/@spfxappdev/logger/lib/functions/library/isset.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -133,7 +133,7 @@ exports.default = isset;
 function isset(property) {
   return typeof property !== 'undefined' && property != null;
 }
-},{}],"../../src/functions/library/isNullOrEmpty.ts":[function(require,module,exports) {
+},{}],"../node_modules/@spfxappdev/logger/lib/functions/library/isNullOrEmpty.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -166,7 +166,7 @@ function isNullOrEmpty(property) {
 
   return property.length < 1;
 }
-},{"./isset":"../../src/functions/library/isset.ts"}],"../../src/functions/library/getUrlParameter.ts":[function(require,module,exports) {
+},{"./isset":"../node_modules/@spfxappdev/logger/lib/functions/library/isset.js"}],"../node_modules/@spfxappdev/logger/lib/functions/library/getUrlParameter.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -206,7 +206,7 @@ function getUrlParameter(parameterName, url) {
 
   return results[1];
 }
-},{"./isNullOrEmpty":"../../src/functions/library/isNullOrEmpty.ts"}],"../../src/functions/library/toBoolean.ts":[function(require,module,exports) {
+},{"./isNullOrEmpty":"../node_modules/@spfxappdev/logger/lib/functions/library/isNullOrEmpty.js"}],"../node_modules/@spfxappdev/logger/lib/functions/library/toBoolean.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -243,7 +243,7 @@ function toBoolean(value) {
 
   return value === 'false' || value === '0' || value === 0 ? false : true;
 }
-},{"./isset":"../../src/functions/library/isset.ts"}],"../../src/functions/index.ts":[function(require,module,exports) {
+},{"./isset":"../node_modules/@spfxappdev/logger/lib/functions/library/isset.js"}],"../node_modules/@spfxappdev/logger/lib/functions/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -283,7 +283,7 @@ var _isset = _interopRequireDefault(require("./library/isset"));
 var _toBoolean = _interopRequireDefault(require("./library/toBoolean"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./library/getUrlParameter":"../../src/functions/library/getUrlParameter.ts","./library/isNullOrEmpty":"../../src/functions/library/isNullOrEmpty.ts","./library/isset":"../../src/functions/library/isset.ts","./library/toBoolean":"../../src/functions/library/toBoolean.ts"}],"../../src/library/Logger.ts":[function(require,module,exports) {
+},{"./library/getUrlParameter":"../node_modules/@spfxappdev/logger/lib/functions/library/getUrlParameter.js","./library/isNullOrEmpty":"../node_modules/@spfxappdev/logger/lib/functions/library/isNullOrEmpty.js","./library/isset":"../node_modules/@spfxappdev/logger/lib/functions/library/isset.js","./library/toBoolean":"../node_modules/@spfxappdev/logger/lib/functions/library/toBoolean.js"}],"../node_modules/@spfxappdev/logger/lib/library/Logger.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -293,16 +293,12 @@ exports.Logger = exports.LogType = void 0;
 
 var _functions = require("../functions");
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
 var __assign = void 0 && (void 0).__assign || function () {
   __assign = Object.assign || function (t) {
     for (var s, i = 1, n = arguments.length; i < n; i++) {
       s = arguments[i];
 
-      for (var p in s) {
-        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-      }
+      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
     }
 
     return t;
@@ -312,9 +308,7 @@ var __assign = void 0 && (void 0).__assign || function () {
 };
 
 var __spreadArray = void 0 && (void 0).__spreadArray || function (to, from) {
-  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) {
-    to[j] = from[i];
-  }
+  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) to[j] = from[i];
 
   return to;
 };
@@ -360,7 +354,7 @@ var Logger = function () {
   }
 
   Object.defineProperty(Logger.prototype, "isLoggingEnabledByUrl", {
-    get: function get() {
+    get: function () {
       // URL Parameter already checked, return value from Parameter
       if ((0, _functions.isset)(this._loggingEnabledByUrl)) {
         return this._loggingEnabledByUrl;
@@ -381,7 +375,7 @@ var Logger = function () {
     configurable: true
   });
   Object.defineProperty(Logger.prototype, "isLoggingEnabledBySettings", {
-    get: function get() {
+    get: function () {
       var enableLog = this.settings.LoggingEnabled;
       return enableLog.EnableAll || enableLog.EnableError || enableLog.EnableInfo || enableLog.EnableLog || enableLog.EnableTable || enableLog.EnableWarn;
     },
@@ -389,7 +383,7 @@ var Logger = function () {
     configurable: true
   });
   Object.defineProperty(Logger.prototype, "namespacesToLogFromUrl", {
-    get: function get() {
+    get: function () {
       if ((0, _functions.isset)(this._namespacesToLog)) {
         return this._namespacesToLog;
       }
@@ -474,7 +468,7 @@ var Logger = function () {
         }
 
         data.forEach(function (d) {
-          var valueType = _typeof(d);
+          var valueType = typeof d;
 
           if (valueType !== 'array' && valueType !== 'object') {
             /* tslint:disable:no-console */
@@ -585,7 +579,7 @@ var Logger = function () {
 }();
 
 exports.Logger = Logger;
-},{"../functions":"../../src/functions/index.ts"}],"../../src/library/decorators/decorators.utility.ts":[function(require,module,exports) {
+},{"../functions":"../node_modules/@spfxappdev/logger/lib/functions/index.js"}],"../node_modules/@spfxappdev/logger/lib/library/decorators/decorators.utility.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -595,24 +589,20 @@ exports.getLogSettings = exports.getLogCategoryOrCustom = exports.logFunc = void
 
 var _Logger = require("../Logger");
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
 var __spreadArray = void 0 && (void 0).__spreadArray || function (to, from) {
-  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) {
-    to[j] = from[i];
-  }
+  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) to[j] = from[i];
 
   return to;
 };
 
-var logFunc = function logFunc(target, enableConsoleLogging, loggingCategory, logType) {
+var logFunc = function (target, enableConsoleLogging, loggingCategory, logType) {
   var logData = [];
 
   for (var _i = 4; _i < arguments.length; _i++) {
     logData[_i - 4] = arguments[_i];
   }
 
-  var containsLogger = _typeof(target['logger']) === 'object'; // && (target as any).getLogger() instanceof Logger;
+  var containsLogger = typeof target['logger'] === 'object'; // && (target as any).getLogger() instanceof Logger;
 
   var loggingSettings = containsLogger ? target.logger.getCurrentSettings() : _Logger.Logger.DefaultSettings;
   loggingSettings.LoggingEnabled = enableConsoleLogging;
@@ -622,7 +612,7 @@ var logFunc = function logFunc(target, enableConsoleLogging, loggingCategory, lo
 
 exports.logFunc = logFunc;
 
-var getLogCategoryOrCustom = function getLogCategoryOrCustom(target, customLogCategory, fallbackValue) {
+var getLogCategoryOrCustom = function (target, customLogCategory, fallbackValue) {
   if (customLogCategory === void 0) {
     customLogCategory = null;
   }
@@ -645,12 +635,12 @@ var getLogCategoryOrCustom = function getLogCategoryOrCustom(target, customLogCa
 
 exports.getLogCategoryOrCustom = getLogCategoryOrCustom;
 
-var getLogSettings = function getLogSettings() {
+var getLogSettings = function () {
   return _Logger.Logger.DefaultSettings;
 };
 
 exports.getLogSettings = getLogSettings;
-},{"../Logger":"../../src/library/Logger.ts"}],"../../src/library/decorators/class.decorators.ts":[function(require,module,exports) {
+},{"../Logger":"../node_modules/@spfxappdev/logger/lib/library/Logger.js"}],"../node_modules/@spfxappdev/logger/lib/library/decorators/class.decorators.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -667,9 +657,7 @@ var __assign = void 0 && (void 0).__assign || function () {
     for (var s, i = 1, n = arguments.length; i < n; i++) {
       s = arguments[i];
 
-      for (var p in s) {
-        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-      }
+      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
     }
 
     return t;
@@ -679,9 +667,7 @@ var __assign = void 0 && (void 0).__assign || function () {
 };
 
 var __spreadArray = void 0 && (void 0).__spreadArray || function (to, from) {
-  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) {
-    to[j] = from[i];
-  }
+  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) to[j] = from[i];
 
   return to;
 };
@@ -698,25 +684,25 @@ var defaultOptions = {
 * @example export interface MyClass extends LoggerBase {}; export class MyClass;
 */
 
-var classLogger = function classLogger(options) {
+var classLogger = function (options) {
   if (options === void 0) {
     options = null;
   }
 
   options = __assign(__assign({}, defaultOptions), options);
 
-  var classLoggerFunc = function classLoggerFunc(Base) {
+  var classLoggerFunc = function (Base) {
     // save a reference to the original constructor
     var original = Base;
     var fallbackName = original && original.name ? original.name : '';
     var enableConsoleLogging = options.enableConsoleLogging || _Logger.Logger.DefaultSettings.LoggingEnabled;
     var loggingCategory = (0, _decorators.getLogCategoryOrCustom)(original, options.customLogCategory, fallbackName);
 
-    var getLogCategoryFunc = function getLogCategoryFunc() {
+    var getLogCategoryFunc = function () {
       return (0, _decorators.getLogCategoryOrCustom)(original, options.customLogCategory, fallbackName);
     };
 
-    var logFunc = function logFunc(logType) {
+    var logFunc = function (logType) {
       var logData = [];
 
       for (var _i = 1; _i < arguments.length; _i++) {
@@ -726,7 +712,7 @@ var classLogger = function classLogger(options) {
       _decorators.logFunc.apply(void 0, __spreadArray([original, enableConsoleLogging, loggingCategory, logType], logData));
     };
 
-    var logSettingsFunc = function logSettingsFunc() {
+    var logSettingsFunc = function () {
       return (0, _decorators.getLogSettings)();
     };
 
@@ -742,7 +728,7 @@ var classLogger = function classLogger(options) {
 
 
     function construct(classConstructor, args) {
-      var c = function c() {
+      var c = function () {
         return classConstructor.apply(this, args);
       };
 
@@ -753,7 +739,7 @@ var classLogger = function classLogger(options) {
     } // the new constructor behaviour
 
 
-    var f = function f() {
+    var f = function () {
       var args = [];
 
       for (var _i = 0; _i < arguments.length; _i++) {
@@ -773,7 +759,7 @@ var classLogger = function classLogger(options) {
 };
 
 exports.classLogger = classLogger;
-},{"../Logger":"../../src/library/Logger.ts","./decorators.utility":"../../src/library/decorators/decorators.utility.ts"}],"../../src/library/decorators/method.decorators.ts":[function(require,module,exports) {
+},{"../Logger":"../node_modules/@spfxappdev/logger/lib/library/Logger.js","./decorators.utility":"../node_modules/@spfxappdev/logger/lib/library/decorators/decorators.utility.js"}],"../node_modules/@spfxappdev/logger/lib/library/decorators/method.decorators.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -790,9 +776,7 @@ var __assign = void 0 && (void 0).__assign || function () {
     for (var s, i = 1, n = arguments.length; i < n; i++) {
       s = arguments[i];
 
-      for (var p in s) {
-        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-      }
+      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
     }
 
     return t;
@@ -802,9 +786,7 @@ var __assign = void 0 && (void 0).__assign || function () {
 };
 
 var __spreadArray = void 0 && (void 0).__spreadArray || function (to, from) {
-  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) {
-    to[j] = from[i];
-  }
+  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) to[j] = from[i];
 
   return to;
 };
@@ -814,7 +796,7 @@ var defaultOptions = {
   enableConsoleLogging: null
 };
 
-var methodLogger = function methodLogger(options) {
+var methodLogger = function (options) {
   if (options === void 0) {
     options = null;
   }
@@ -827,7 +809,7 @@ var methodLogger = function methodLogger(options) {
       var enableConsoleLogging = options.enableConsoleLogging || _Logger.Logger.DefaultSettings.LoggingEnabled;
       var loggingCategory = (0, _decorators.getLogCategoryOrCustom)(target, options.customLogCategory, propertyKey);
 
-      var logFunc = function logFunc(logType) {
+      var logFunc = function (logType) {
         var logData = [];
 
         for (var _i = 1; _i < arguments.length; _i++) {
@@ -867,7 +849,7 @@ var methodLogger = function methodLogger(options) {
 };
 
 exports.methodLogger = methodLogger;
-},{"../Logger":"../../src/library/Logger.ts","./decorators.utility":"../../src/library/decorators/decorators.utility.ts"}],"../../src/library/decorators/property.decorators.ts":[function(require,module,exports) {
+},{"../Logger":"../node_modules/@spfxappdev/logger/lib/library/Logger.js","./decorators.utility":"../node_modules/@spfxappdev/logger/lib/library/decorators/decorators.utility.js"}],"../node_modules/@spfxappdev/logger/lib/library/decorators/property.decorators.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -884,9 +866,7 @@ var __assign = void 0 && (void 0).__assign || function () {
     for (var s, i = 1, n = arguments.length; i < n; i++) {
       s = arguments[i];
 
-      for (var p in s) {
-        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-      }
+      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
     }
 
     return t;
@@ -896,9 +876,7 @@ var __assign = void 0 && (void 0).__assign || function () {
 };
 
 var __spreadArray = void 0 && (void 0).__spreadArray || function (to, from) {
-  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) {
-    to[j] = from[i];
-  }
+  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) to[j] = from[i];
 
   return to;
 };
@@ -908,7 +886,7 @@ var defaultOptions = {
   enableConsoleLogging: null
 };
 
-var propertyLogger = function propertyLogger(options) {
+var propertyLogger = function (options) {
   if (options === void 0) {
     options = null;
   }
@@ -918,7 +896,7 @@ var propertyLogger = function propertyLogger(options) {
     var enableConsoleLogging = options.enableConsoleLogging || _Logger.Logger.DefaultSettings.LoggingEnabled;
     var loggingCategory = (0, _decorators.getLogCategoryOrCustom)(target, options.customLogCategory, target.constructor['name'] + "." + propertyName);
 
-    var logFunc = function logFunc(logType) {
+    var logFunc = function (logType) {
       var logData = [];
 
       for (var _i = 1; _i < arguments.length; _i++) {
@@ -933,13 +911,13 @@ var propertyLogger = function propertyLogger(options) {
 
     var _val = target[propertyName]; // property getter method
 
-    var getter = function getter() {
+    var getter = function () {
       logFunc(_Logger.LogType.Log, "Get: " + propertyName + " => " + _val);
       return _val;
     }; // property setter method
 
 
-    var setter = function setter(newVal) {
+    var setter = function (newVal) {
       logFunc(_Logger.LogType.Log, "Set: " + propertyName + " => " + newVal);
       _val = newVal;
     }; // Delete property.
@@ -958,7 +936,7 @@ var propertyLogger = function propertyLogger(options) {
 };
 
 exports.propertyLogger = propertyLogger;
-},{"../Logger":"../../src/library/Logger.ts","./decorators.utility":"../../src/library/decorators/decorators.utility.ts"}],"../../src/library/decorators/logFactory.decorators.ts":[function(require,module,exports) {
+},{"../Logger":"../node_modules/@spfxappdev/logger/lib/library/Logger.js","./decorators.utility":"../node_modules/@spfxappdev/logger/lib/library/decorators/decorators.utility.js"}],"../node_modules/@spfxappdev/logger/lib/library/decorators/logFactory.decorators.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -975,12 +953,12 @@ var _property = require("./property.decorators");
 var _this = void 0;
 
 // decorator factory - which calls the corresponding decorators based on arguments passed
-var log = function log(options) {
+var log = function (options) {
   if (options === void 0) {
     options = null;
   }
 
-  var factoryFunction = function factoryFunction() {
+  var factoryFunction = function () {
     var args = [];
 
     for (var _i = 0; _i < arguments.length; _i++) {
@@ -1015,7 +993,7 @@ var log = function log(options) {
 };
 
 exports.log = log;
-},{"./class.decorators":"../../src/library/decorators/class.decorators.ts","./method.decorators":"../../src/library/decorators/method.decorators.ts","./property.decorators":"../../src/library/decorators/property.decorators.ts"}],"../../src/index.ts":[function(require,module,exports) {
+},{"./class.decorators":"../node_modules/@spfxappdev/logger/lib/library/decorators/class.decorators.js","./method.decorators":"../node_modules/@spfxappdev/logger/lib/library/decorators/method.decorators.js","./property.decorators":"../node_modules/@spfxappdev/logger/lib/library/decorators/property.decorators.js"}],"../node_modules/@spfxappdev/logger/lib/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1027,22 +1005,10 @@ Object.defineProperty(exports, "Logger", {
     return _Logger.Logger;
   }
 });
-Object.defineProperty(exports, "ILoggerSettings", {
-  enumerable: true,
-  get: function () {
-    return _Logger.ILoggerSettings;
-  }
-});
 Object.defineProperty(exports, "LogType", {
   enumerable: true,
   get: function () {
     return _Logger.LogType;
-  }
-});
-Object.defineProperty(exports, "IConsoleLoggingEnabled", {
-  enumerable: true,
-  get: function () {
-    return _Logger.IConsoleLoggingEnabled;
   }
 });
 Object.defineProperty(exports, "log", {
@@ -1055,7 +1021,7 @@ Object.defineProperty(exports, "log", {
 var _Logger = require("./library/Logger");
 
 var _logFactory = require("./library/decorators/logFactory.decorators");
-},{"./library/Logger":"../../src/library/Logger.ts","./library/decorators/logFactory.decorators":"../../src/library/decorators/logFactory.decorators.ts"}],"App.ts":[function(require,module,exports) {
+},{"./library/Logger":"../node_modules/@spfxappdev/logger/lib/library/Logger.js","./library/decorators/logFactory.decorators":"../node_modules/@spfxappdev/logger/lib/library/decorators/logFactory.decorators.js"}],"App.ts":[function(require,module,exports) {
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -1072,15 +1038,17 @@ var __decorate = this && this.__decorate || function (decorators, target, key, d
 
 Object.defineProperty(exports, "__esModule", {
   value: true
-}); // import { Logger } from 'typescript-console-logger';
+});
 
-var index_1 = require("../../src/index");
+var logger_1 = require("@spfxappdev/logger"); // import { Logger, ILoggerSettings } from '../../src/index';
+// import { log } from '../../src/library/decorators/logFactory.decorators';
+// import { LoggerBase } from '../../src/library/LoggerBase';
+// import { ILogger } from '../../src/library/ILogger';
 
-var logFactory_decorators_1 = require("../../src/library/decorators/logFactory.decorators");
 
 var TestApp = function () {
   function TestApp() {
-    this.logger = new index_1.Logger("spfxAppDev");
+    this.logger = new logger_1.Logger("spfxAppDev");
   }
 
   TestApp.prototype.doThings = function () {
@@ -1118,7 +1086,7 @@ var myLoggerSettings = {
     EnableWarn: true
   }
 };
-index_1.Logger.DefaultSettings = myLoggerSettings;
+logger_1.Logger.DefaultSettings = myLoggerSettings;
 var t = new TestApp();
 t.doThings();
 t.doThingsWithParam("Hello console logger number", 1);
@@ -1163,15 +1131,15 @@ var TestAppWithDecorators = function () {
     };
   };
 
-  __decorate([logFactory_decorators_1.log()], TestAppWithDecorators.prototype, "myProp", void 0);
+  __decorate([logger_1.log()], TestAppWithDecorators.prototype, "myProp", void 0);
 
-  __decorate([logFactory_decorators_1.log()], TestAppWithDecorators.prototype, "doThings", null);
+  __decorate([logger_1.log()], TestAppWithDecorators.prototype, "doThings", null);
 
-  __decorate([logFactory_decorators_1.log()], TestAppWithDecorators.prototype, "doThingsWithParam", null);
+  __decorate([logger_1.log()], TestAppWithDecorators.prototype, "doThingsWithParam", null);
 
-  __decorate([logFactory_decorators_1.log()], TestAppWithDecorators.prototype, "examples", null);
+  __decorate([logger_1.log()], TestAppWithDecorators.prototype, "examples", null);
 
-  TestAppWithDecorators = __decorate([logFactory_decorators_1.log({
+  TestAppWithDecorators = __decorate([logger_1.log({
     customLogCategory: "myCustomLoggingCategory",
     override: false
   })], TestAppWithDecorators);
@@ -1183,7 +1151,7 @@ t2.doThings();
 t2.doThingsWithParam("Hello console logger number", 1);
 t2.examples();
 console.log(t2 instanceof TestAppWithDecorators);
-},{"../../src/index":"../../src/index.ts","../../src/library/decorators/logFactory.decorators":"../../src/library/decorators/logFactory.decorators.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"@spfxappdev/logger":"../node_modules/@spfxappdev/logger/lib/index.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -1211,7 +1179,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56032" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51752" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
