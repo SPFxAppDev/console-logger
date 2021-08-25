@@ -55,7 +55,9 @@ export const classLogger: (options: IClassLoggerDecoratorOptions) => any = (opti
                 return classConstructor.apply(this, args);
             };
             c.prototype = classConstructor.prototype;
-            return new c();
+            let instanceObj = new c();
+            instanceObj.logger = new Logger(instanceObj.getLogCategory(), instanceObj.getLogSettings());
+            return instanceObj;
         }
 
         // the new constructor behaviour

@@ -1,6 +1,8 @@
-import { LogType, ILoggerSettings } from './Logger';
+import { Logger, LogType, ILoggerSettings } from './Logger';
 
 export interface ILogger {
+    
+    logger: Logger;
     /**
      * Log's the provided data in the Console under the loggingCategory of the Module.
      * @param data The data to Log in the Console.
