@@ -1,0 +1,35 @@
+{
+  "name": "@spfxappdev/logger",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "prepublish": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SimpleBase/console-logger.git"
+  },
+  "keywords": [
+    "jslogger",
+    "console logger",
+    "logger",
+    "javascript logging",
+    "logging",
+    "console.log",
+    "typescript logger"
+  ],
+  "author": "Seryoga",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SimpleBase/console-logger/issues"
+  },
+  "homepage": "https://github.com/SimpleBase/console-logger#readme",
+  "devDependencies": {
+    "typescript": "^4.3.5"
+  }
+}
