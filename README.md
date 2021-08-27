@@ -30,7 +30,17 @@ logger.error("Welcome to @spfxappdev/logger");
 logger.table(["Welcome to @spfxappdev/logger"]);
 ```
 
-4. Output in the Dev-Console
+4. Shorthand
+```typescript
+//In this case, Logger.DefaultSettings are used as settings
+Logger.Log("spfxAppDev", LogType.Log, "Welcome to @spfxappdev/logger");
+Logger.Log("spfxAppDev", LogType.Warning, "Welcome to @spfxappdev/logger");
+Logger.Log("spfxAppDev", LogType.Info, "Welcome to @spfxappdev/logger");
+Logger.Log("spfxAppDev", LogType.Error, "Welcome to @spfxappdev/logger");
+Logger.Log("spfxAppDev", LogType.Table, ["Welcome to @spfxappdev/logger"]);
+```
+
+5. Output in the Dev-Console
  
 ![Console Output](./examples/images/console_output.png)
 
@@ -44,14 +54,7 @@ The "Logger" constructor has a second, optional parameter for the settings. The 
 const loggerSettings: ILoggerSettings = {
     LogNamespaceUrlParameterName: 'LogOnly',
     LoggingEnabledUrlParameterName: 'EnableConsoleLogging',
-    LoggingEnabled: {
-        EnableAll: true,
-        EnableError: true,
-        EnableInfo: true,
-        EnableLog: true,
-        EnableTable: true,
-        EnableWarn: true
-    }
+    LogLevel: LogLevel.All
 }
 ```
 
@@ -60,16 +63,7 @@ If you want to override the default settings, you can do it like this:
 
 ```typescript
 const myLoggerSettings: ILoggerSettings = {
-    LogNamespaceUrlParameterName: 'LogOnlyMy',
-    LoggingEnabledUrlParameterName: 'EnableLogging',
-    LoggingEnabled: {
-        EnableAll: false,
-        EnableError: true,
-        EnableInfo: false,
-        EnableLog: false,
-        EnableTable: false,
-        EnableWarn: true
-    }
+    LogLevel: LogLevel.Error | LogLevel.Warning //Log Only Errors and Warnings
 }
 
 const logger = new Logger("spfxAppDev", myLoggerSettings);
@@ -82,14 +76,7 @@ If you want to override the default settings, you can do it like this:
 const myLoggerSettings: ILoggerSettings = {
     LogNamespaceUrlParameterName: 'LogOnlyMy',
     LoggingEnabledUrlParameterName: 'EnableLogging',
-    LoggingEnabled: {
-        EnableAll: false,
-        EnableError: true,
-        EnableInfo: false,
-        EnableLog: false,
-        EnableTable: false,
-        EnableWarn: true
-    }
+    LogLevel: LogLevel.All
 }
 
 Logger.DefaultSettings = myLoggerSettings;
@@ -130,15 +117,14 @@ To use the logging decorators, you have to set the `experimentalDecorators` prop
 Import:
 
 ```typescript
-import { log } from '@spfxappdev/logger';
-import { ILogger } from '@spfxappdev/logger/lib/library/ILogger';
+import { log, IClassLogger } from '@spfxappdev/logger';
 ```
 
 ####  Class Decorator
 
 ```typescript
 //For Intellisense with the @classLogger(), use this:
-interface TestAppWithDecorators extends ILogger { }
+interface TestAppWithDecorators extends IClassLogger { }
      
 
 @log({

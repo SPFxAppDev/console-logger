@@ -117,7 +117,110 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"../node_modules/@spfxappdev/logger/lib/functions/library/isset.js":[function(require,module,exports) {
+})({"../../node_modules/@spfxappdev/utility/lib/functions/arrayFrom.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = arrayFrom;
+
+/**
+ * this functions calls Array.from() or make the same logic if not Exists.
+ * The Array.from() method creates a new, shallow-copied Array instance from an array-like or iterable object.
+ * @param arrLike An array-like or iterable object to convert to an array.
+ * @param mapFunc (optional) Map function to call on every element of the array.
+ * @param thisArgs (optional) Value to use as this when executing mapFn.
+ */
+
+/* tslint:disable */
+function arrayFrom(arrLike, mapFunc, thisArgs) {
+  if (!Array["from"]) {
+    Array["from"] = function () {
+      var toStr = Object.prototype.toString;
+
+      var isCallable = function (fn) {
+        return typeof fn === 'function' || toStr.call(fn) === '[object Function]';
+      };
+
+      var toInteger = function (value) {
+        var numberVal = Number(value);
+
+        if (isNaN(numberVal)) {
+          return 0;
+        }
+
+        if (numberVal === 0 || !isFinite(numberVal)) {
+          return numberVal;
+        }
+
+        return (numberVal > 0 ? 1 : -1) * Math.floor(Math.abs(numberVal));
+      };
+
+      var maxSafeInteger = Math.pow(2, 53) - 1;
+
+      var toLength = function (value) {
+        var len = toInteger(value);
+        return Math.min(Math.max(len, 0), maxSafeInteger);
+      };
+
+      return function from(arrayLike) {
+        var C = this;
+        var items = Object(arrayLike);
+
+        if (arrayLike == null) {
+          throw new TypeError('Array.from requires an array-like object - not null or undefined');
+        }
+
+        var mapFn;
+        var args = arguments;
+
+        if (args.length > 1) {
+          mapFn = args[1];
+        }
+
+        var T;
+
+        if (typeof mapFn !== 'undefined') {
+          if (!isCallable(mapFn)) {
+            throw new TypeError('Array.from: when provided, the second argument must be a function');
+          }
+
+          if (args.length > 2) {
+            T = args[2];
+          }
+        }
+
+        var len = toLength(items.length);
+        var A = isCallable(C) ? Object(new C(len)) : new Array(len); // 16. Let k be 0.
+
+        var k = 0; // 17. Repeat, while k < len… (also steps a - h)
+
+        var kValue;
+
+        while (k < len) {
+          kValue = items[k];
+
+          if (mapFn) {
+            A[k] = typeof T === 'undefined' ? mapFn(kValue, k) : mapFn.call(T, kValue, k);
+          } else {
+            A[k] = kValue;
+          }
+
+          k += 1;
+        } // 18. Let putStatus be Put(A, "length", len, true).
+
+
+        A.length = len; // 20. Return A.
+
+        return A;
+      };
+    };
+  }
+
+  return Array["from"](arrLike, mapFunc, thisArgs);
+}
+},{}],"../../node_modules/@spfxappdev/utility/lib/functions/isset.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -133,7 +236,7 @@ exports.default = isset;
 function isset(property) {
   return typeof property !== 'undefined' && property != null;
 }
-},{}],"../node_modules/@spfxappdev/logger/lib/functions/library/isNullOrEmpty.js":[function(require,module,exports) {
+},{}],"../../node_modules/@spfxappdev/utility/lib/functions/isNullOrEmpty.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -166,7 +269,192 @@ function isNullOrEmpty(property) {
 
   return property.length < 1;
 }
-},{"./isset":"../node_modules/@spfxappdev/logger/lib/functions/library/isset.js"}],"../node_modules/@spfxappdev/logger/lib/functions/library/getUrlParameter.js":[function(require,module,exports) {
+},{"./isset":"../../node_modules/@spfxappdev/utility/lib/functions/isset.js"}],"../../node_modules/@spfxappdev/utility/lib/functions/cssClasses.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = cssClasses;
+
+var _isset = _interopRequireDefault(require("./isset"));
+
+var _isNullOrEmpty = _interopRequireDefault(require("./isNullOrEmpty"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * A utility function for conditionally joining classNames together.
+ * @example cssClasses('spfx-app-dev', 'theme'); // => 'spfx-app-dev theme'
+ * @example cssClasses('spfx-app-dev', { theme: false });  // => 'spfx-app-dev'
+ * @example cssClasses({ 'spfx-app-dev': true });  // => 'spfx-app-dev'
+ * @example cssClasses({ 'spfx-app-dev': false });  // => ''
+ * @example cssClasses({ spfx-app-dev: true }, { theme: true }); // => 'spfx-app-dev theme'
+ * @example cssClasses({ spfx-app-dev: true, theme: true });  // => 'spfx-app-dev theme'
+ * @example cssClasses('spfx-app-dev', { theme: true, active: false }, 'item');  // => 'spfx-app-dev theme item'
+ * @example cssClasses(null, false, 'spfx-app-dev', undefined, 0, 1, { theme: null }, '');  // => 'spfx-app-dev'
+ * @example const arr = ['theme', { active: true, item: false }]; cssClasses('spfx-app-dev', arr);  // => 'spfx-app-dev theme active'
+ */
+function cssClasses() {
+  var args = [];
+
+  for (var _i = 0; _i < arguments.length; _i++) {
+    args[_i] = arguments[_i];
+  }
+
+  var classes = [];
+  var self = cssClasses;
+
+  for (var i = 0; i < args.length; i++) {
+    var arg = args[i];
+
+    if (!(0, _isset.default)(arg)) {
+      continue;
+    }
+
+    var argType = typeof arg;
+
+    if (argType === 'string') {
+      classes.push(arg);
+      continue;
+    }
+
+    if (Array.isArray(arg) && arg.length > 0) {
+      var classNamesFromArray = self.apply(null, arg);
+
+      if ((0, _isset.default)(classNamesFromArray) && !(0, _isNullOrEmpty.default)(classNamesFromArray)) {
+        classes.push(classNamesFromArray);
+      }
+
+      continue;
+    }
+
+    if (argType === 'object') {
+      if (arg.toString !== Object.prototype.toString) {
+        classes.push(arg.toString());
+        continue;
+      }
+
+      for (var className in arg) {
+        if (arg.hasOwnProperty(className) && arg[className]) {
+          classes.push(className);
+        }
+      }
+    }
+  }
+
+  return classes.join(' ');
+}
+},{"./isset":"../../node_modules/@spfxappdev/utility/lib/functions/isset.js","./isNullOrEmpty":"../../node_modules/@spfxappdev/utility/lib/functions/isNullOrEmpty.js"}],"../../node_modules/@spfxappdev/utility/lib/functions/extend.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = extend;
+
+var _isNullOrEmpty = _interopRequireDefault(require("./isNullOrEmpty"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var __assign = void 0 && (void 0).__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+
+      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+    }
+
+    return t;
+  };
+
+  return __assign.apply(this, arguments);
+};
+
+/**
+ * Deep merge two objects.
+ * @param target An object that will receive the new properties if additional objects are passed in.
+ * @param sources An object containing additional properties to merge in.
+ * @param inCaseOfArrayUseSourceObject if true, then the array from source object will
+ * be use if target-value and source-value are arrays. Otherwise both arrays will be merged
+ */
+function extend(target, source, inCaseOfArrayUseSourceObject) {
+  if (inCaseOfArrayUseSourceObject === void 0) {
+    inCaseOfArrayUseSourceObject = true;
+  }
+
+  if (Array.isArray(target) && Array.isArray(source)) {
+    if (inCaseOfArrayUseSourceObject) {
+      return source;
+    }
+
+    return (0, _isNullOrEmpty.default)(new Set(target.concat(source)));
+  } // Iterate through `source` properties and if an `Object` set property to merge of `target` and `source` properties
+
+
+  for (var _i = 0, _a = Object.keys(source); _i < _a.length; _i++) {
+    var key = _a[_i];
+
+    if (Array.isArray(source[key])) {
+      var targetValue = target[key] || [];
+      source[key] = extend(targetValue, source[key], inCaseOfArrayUseSourceObject);
+    } else if (source[key] instanceof Object) {
+      var targetValue = target[key] || {};
+      source[key] = extend(targetValue, source[key], inCaseOfArrayUseSourceObject);
+    }
+  } // Join `target` and modified `source`
+
+
+  target = target || {};
+
+  var tempTarget = __assign(__assign({}, target), source);
+
+  return tempTarget;
+}
+},{"./isNullOrEmpty":"../../node_modules/@spfxappdev/utility/lib/functions/isNullOrEmpty.js"}],"../../node_modules/@spfxappdev/utility/lib/functions/getDeepOrDefault.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = getDeepOrDefault;
+
+var _isset = _interopRequireDefault(require("./isset"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Gets an nested property from an specific object or default, if not isset.
+ * @param {any} objectToCheck The Property to checked.
+ * @param {string} keyNameSpace The Key-Namespace of the Property (for example: "My.Nested.Property").
+ * @param {any} defaultValue The defaultValue if property not exist.
+ * @returns {any} If the Property is set, than the requested property otherwise defaultValue.
+ */
+function getDeepOrDefault(objectToCheck, keyNameSpace, defaultValue) {
+  if (defaultValue === void 0) {
+    defaultValue = null;
+  }
+
+  if (!(0, _isset.default)(objectToCheck)) {
+    return defaultValue;
+  }
+
+  var namespaceKeys = keyNameSpace.split('.');
+  var currentObjectPath = objectToCheck;
+
+  for (var i = 0; i < namespaceKeys.length; i++) {
+    var currentKey = namespaceKeys[i];
+
+    if (!(0, _isset.default)(currentObjectPath)) {
+      return defaultValue;
+    }
+
+    currentObjectPath = currentObjectPath[currentKey];
+  }
+
+  return currentObjectPath;
+}
+},{"./isset":"../../node_modules/@spfxappdev/utility/lib/functions/isset.js"}],"../../node_modules/@spfxappdev/utility/lib/functions/getUrlParameter.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -206,7 +494,65 @@ function getUrlParameter(parameterName, url) {
 
   return results[1];
 }
-},{"./isNullOrEmpty":"../node_modules/@spfxappdev/logger/lib/functions/library/isNullOrEmpty.js"}],"../node_modules/@spfxappdev/logger/lib/functions/library/toBoolean.js":[function(require,module,exports) {
+},{"./isNullOrEmpty":"../../node_modules/@spfxappdev/utility/lib/functions/isNullOrEmpty.js"}],"../../node_modules/@spfxappdev/utility/lib/functions/isFunction.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = isFunction;
+
+var _isset = _interopRequireDefault(require("./isset"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Determines wheter the Property is a Function.
+ * @param {any} property The Property to be determined.
+ * @returns {boolean} Wheter the Property is a Function.
+ */
+function isFunction(property) {
+  return (0, _isset.default)(property) && typeof property === 'function';
+}
+},{"./isset":"../../node_modules/@spfxappdev/utility/lib/functions/isset.js"}],"../../node_modules/@spfxappdev/utility/lib/functions/issetDeep.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = issetDeep;
+
+var _isset = _interopRequireDefault(require("./isset"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Determines if the provided Property is set deep/nested.
+ * @param {any} objectToCheck The Property to checked.
+ * @param {string} keyNameSpace The Key-Namespace of the Property (for example: "My.Nested.Property").
+ * @returns {boolean} If the Property is set <c>true</c> otherwise <c>false</c>.
+ */
+function issetDeep(objectToCheck, keyNameSpace) {
+  if (!(0, _isset.default)(objectToCheck)) {
+    return false;
+  }
+
+  var namespaceKeys = keyNameSpace.split('.');
+  var currentObjectPath = objectToCheck;
+
+  for (var i = 0; i < namespaceKeys.length; i++) {
+    var currentKey = namespaceKeys[i];
+
+    if (!(0, _isset.default)(currentObjectPath)) {
+      return false;
+    }
+
+    currentObjectPath = currentObjectPath[currentKey];
+  }
+
+  return (0, _isset.default)(currentObjectPath);
+}
+},{"./isset":"../../node_modules/@spfxappdev/utility/lib/functions/isset.js"}],"../../node_modules/@spfxappdev/utility/lib/functions/toBoolean.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -219,7 +565,7 @@ var _isset = _interopRequireDefault(require("./isset"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
- * Converts an object to a Boolean.
+ * Converts a value to a Boolean.
  * @param {any} value The Value to be converted to a Boolean.
  * @returns {boolean} If the Value is convertable to a Boolean it
  * is returned as a Boolean otherwise <c>false</c> is returned.
@@ -243,16 +589,46 @@ function toBoolean(value) {
 
   return value === 'false' || value === '0' || value === 0 ? false : true;
 }
-},{"./isset":"../node_modules/@spfxappdev/logger/lib/functions/library/isset.js"}],"../node_modules/@spfxappdev/logger/lib/functions/index.js":[function(require,module,exports) {
+},{"./isset":"../../node_modules/@spfxappdev/utility/lib/functions/isset.js"}],"../../node_modules/@spfxappdev/utility/lib/functions/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+Object.defineProperty(exports, "arrayFrom", {
+  enumerable: true,
+  get: function () {
+    return _arrayFrom.default;
+  }
+});
+Object.defineProperty(exports, "cssClasses", {
+  enumerable: true,
+  get: function () {
+    return _cssClasses.default;
+  }
+});
+Object.defineProperty(exports, "extend", {
+  enumerable: true,
+  get: function () {
+    return _extend.default;
+  }
+});
+Object.defineProperty(exports, "getDeepOrDefault", {
+  enumerable: true,
+  get: function () {
+    return _getDeepOrDefault.default;
+  }
+});
 Object.defineProperty(exports, "getUrlParameter", {
   enumerable: true,
   get: function () {
     return _getUrlParameter.default;
+  }
+});
+Object.defineProperty(exports, "isFunction", {
+  enumerable: true,
+  get: function () {
+    return _isFunction.default;
   }
 });
 Object.defineProperty(exports, "isNullOrEmpty", {
@@ -267,6 +643,12 @@ Object.defineProperty(exports, "isset", {
     return _isset.default;
   }
 });
+Object.defineProperty(exports, "issetDeep", {
+  enumerable: true,
+  get: function () {
+    return _issetDeep.default;
+  }
+});
 Object.defineProperty(exports, "toBoolean", {
   enumerable: true,
   get: function () {
@@ -274,31 +656,66 @@ Object.defineProperty(exports, "toBoolean", {
   }
 });
 
-var _getUrlParameter = _interopRequireDefault(require("./library/getUrlParameter"));
+var _arrayFrom = _interopRequireDefault(require("./arrayFrom"));
 
-var _isNullOrEmpty = _interopRequireDefault(require("./library/isNullOrEmpty"));
+var _cssClasses = _interopRequireDefault(require("./cssClasses"));
 
-var _isset = _interopRequireDefault(require("./library/isset"));
+var _extend = _interopRequireDefault(require("./extend"));
 
-var _toBoolean = _interopRequireDefault(require("./library/toBoolean"));
+var _getDeepOrDefault = _interopRequireDefault(require("./getDeepOrDefault"));
+
+var _getUrlParameter = _interopRequireDefault(require("./getUrlParameter"));
+
+var _isFunction = _interopRequireDefault(require("./isFunction"));
+
+var _isNullOrEmpty = _interopRequireDefault(require("./isNullOrEmpty"));
+
+var _isset = _interopRequireDefault(require("./isset"));
+
+var _issetDeep = _interopRequireDefault(require("./issetDeep"));
+
+var _toBoolean = _interopRequireDefault(require("./toBoolean"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./library/getUrlParameter":"../node_modules/@spfxappdev/logger/lib/functions/library/getUrlParameter.js","./library/isNullOrEmpty":"../node_modules/@spfxappdev/logger/lib/functions/library/isNullOrEmpty.js","./library/isset":"../node_modules/@spfxappdev/logger/lib/functions/library/isset.js","./library/toBoolean":"../node_modules/@spfxappdev/logger/lib/functions/library/toBoolean.js"}],"../node_modules/@spfxappdev/logger/lib/library/Logger.js":[function(require,module,exports) {
+},{"./arrayFrom":"../../node_modules/@spfxappdev/utility/lib/functions/arrayFrom.js","./cssClasses":"../../node_modules/@spfxappdev/utility/lib/functions/cssClasses.js","./extend":"../../node_modules/@spfxappdev/utility/lib/functions/extend.js","./getDeepOrDefault":"../../node_modules/@spfxappdev/utility/lib/functions/getDeepOrDefault.js","./getUrlParameter":"../../node_modules/@spfxappdev/utility/lib/functions/getUrlParameter.js","./isFunction":"../../node_modules/@spfxappdev/utility/lib/functions/isFunction.js","./isNullOrEmpty":"../../node_modules/@spfxappdev/utility/lib/functions/isNullOrEmpty.js","./isset":"../../node_modules/@spfxappdev/utility/lib/functions/isset.js","./issetDeep":"../../node_modules/@spfxappdev/utility/lib/functions/issetDeep.js","./toBoolean":"../../node_modules/@spfxappdev/utility/lib/functions/toBoolean.js"}],"../../node_modules/@spfxappdev/utility/lib/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Logger = exports.LogType = void 0;
 
-var _functions = require("../functions");
+var _functions = require("./functions");
+
+Object.keys(_functions).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (key in exports && exports[key] === _functions[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _functions[key];
+    }
+  });
+});
+},{"./functions":"../../node_modules/@spfxappdev/utility/lib/functions/index.js"}],"../../src/logger/Logger.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Logger = exports.LogType = exports.LogLevel = void 0;
+
+var _utility = require("@spfxappdev/utility");
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 var __assign = void 0 && (void 0).__assign || function () {
   __assign = Object.assign || function (t) {
     for (var s, i = 1, n = arguments.length; i < n; i++) {
       s = arguments[i];
 
-      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      for (var p in s) {
+        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      }
     }
 
     return t;
@@ -308,23 +725,31 @@ var __assign = void 0 && (void 0).__assign || function () {
 };
 
 var __spreadArray = void 0 && (void 0).__spreadArray || function (to, from) {
-  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) to[j] = from[i];
+  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) {
+    to[j] = from[i];
+  }
 
   return to;
 };
 
-var logsEnabled = {
-  EnableAll: true,
-  EnableError: true,
-  EnableInfo: true,
-  EnableLog: true,
-  EnableTable: true,
-  EnableWarn: true
-};
+var LogLevel;
+exports.LogLevel = LogLevel;
+
+(function (LogLevel) {
+  LogLevel[LogLevel["None"] = 0] = "None";
+  LogLevel[LogLevel["Log"] = 1] = "Log";
+  LogLevel[LogLevel["Info"] = 2] = "Info";
+  LogLevel[LogLevel["Warning"] = 4] = "Warning";
+  LogLevel[LogLevel["Error"] = 8] = "Error";
+  LogLevel[LogLevel["Table"] = 16] = "Table";
+  LogLevel[LogLevel["All"] = 31] = "All";
+})(LogLevel || (exports.LogLevel = LogLevel = {}));
+
+;
 var DefaultLoggerSettings = {
   LogNamespaceUrlParameterName: 'LogOnly',
   LoggingEnabledUrlParameterName: 'EnableConsoleLogging',
-  LoggingEnabled: logsEnabled
+  LogLevel: LogLevel.All
 };
 var LogType;
 exports.LogType = LogType;
@@ -348,49 +773,50 @@ var Logger = function () {
     this._loggingEnabledByUrl = undefined;
     this._namespacesToLog = undefined;
 
-    if (!(0, _functions.isset)(settings)) {
-      this.settings = Logger.DefaultSettings;
+    if (!(0, _utility.isset)(settings)) {
+      settings = __assign({}, Logger.DefaultSettings);
     }
+
+    this.settings = __assign(__assign(__assign({}, DefaultLoggerSettings), Logger.DefaultSettings), settings);
   }
 
   Object.defineProperty(Logger.prototype, "isLoggingEnabledByUrl", {
-    get: function () {
+    get: function get() {
       // URL Parameter already checked, return value from Parameter
-      if ((0, _functions.isset)(this._loggingEnabledByUrl)) {
+      if ((0, _utility.isset)(this._loggingEnabledByUrl)) {
         return this._loggingEnabledByUrl;
       } // URL Parameter is not checked. Check and set Parameter
 
 
-      var isEnabledValue = (0, _functions.getUrlParameter)(this.settings.LoggingEnabledUrlParameterName);
+      var isEnabledValue = (0, _utility.getUrlParameter)(this.settings.LoggingEnabledUrlParameterName);
 
-      if (!(0, _functions.isset)(isEnabledValue)) {
+      if (!(0, _utility.isset)(isEnabledValue)) {
         this._loggingEnabledByUrl = false;
         return this._loggingEnabledByUrl;
       }
 
-      this._loggingEnabledByUrl = (0, _functions.toBoolean)(isEnabledValue);
+      this._loggingEnabledByUrl = (0, _utility.toBoolean)(isEnabledValue);
       return this._loggingEnabledByUrl;
     },
     enumerable: false,
     configurable: true
   });
   Object.defineProperty(Logger.prototype, "isLoggingEnabledBySettings", {
-    get: function () {
-      var enableLog = this.settings.LoggingEnabled;
-      return enableLog.EnableAll || enableLog.EnableError || enableLog.EnableInfo || enableLog.EnableLog || enableLog.EnableTable || enableLog.EnableWarn;
+    get: function get() {
+      return !(LogLevel.None == (this.settings.LogLevel | LogLevel.None));
     },
     enumerable: false,
     configurable: true
   });
   Object.defineProperty(Logger.prototype, "namespacesToLogFromUrl", {
-    get: function () {
-      if ((0, _functions.isset)(this._namespacesToLog)) {
+    get: function get() {
+      if ((0, _utility.isset)(this._namespacesToLog)) {
         return this._namespacesToLog;
       }
 
-      var modules = (0, _functions.getUrlParameter)(this.settings.LogNamespaceUrlParameterName);
+      var modules = (0, _utility.getUrlParameter)(this.settings.LogNamespaceUrlParameterName);
 
-      if ((0, _functions.isNullOrEmpty)(modules)) {
+      if ((0, _utility.isNullOrEmpty)(modules)) {
         this._namespacesToLog = [];
         return this._namespacesToLog;
       }
@@ -415,7 +841,7 @@ var Logger = function () {
       data[_i - 1] = arguments[_i];
     }
 
-    if (!(0, _functions.isset)(console)) {
+    if (!(0, _utility.isset)(console)) {
       return;
     }
 
@@ -424,24 +850,25 @@ var Logger = function () {
     } //If namespaces are filtered by URL and the current namespace is NOT one of it
 
 
-    if (!(0, _functions.isNullOrEmpty)(this.namespacesToLogFromUrl) && this.namespacesToLogFromUrl.indexOf(this.logNamespace.toLowerCase()) < 0) {
+    if (!(0, _utility.isNullOrEmpty)(this.namespacesToLogFromUrl) && this.namespacesToLogFromUrl.indexOf(this.logNamespace.toLowerCase()) < 0) {
       return;
     }
 
     var valuesToLog = __spreadArray(__spreadArray([], data), [this.logNamespace]);
 
-    var logEnabled = this.isLoggingEnabledByUrl || this.settings.LoggingEnabled.EnableAll;
+    var logEnabled = this.isLoggingEnabledByUrl;
+    var currentLogLevel = this.settings.LogLevel;
 
     switch (logType) {
       case LogType.Warning:
-        if (logEnabled || this.settings.LoggingEnabled.EnableWarn) {
+        if (logEnabled || LogLevel.Warning == (currentLogLevel & LogLevel.Warning)) {
           console.warn.apply(console, valuesToLog);
         }
 
         break;
 
       case LogType.Info:
-        if (logEnabled || this.settings.LoggingEnabled.EnableInfo) {
+        if (logEnabled || LogLevel.Info == (currentLogLevel & LogLevel.Info)) {
           /* tslint:disable:no-console */
           console.info.apply(console, valuesToLog);
         }
@@ -449,14 +876,14 @@ var Logger = function () {
         break;
 
       case LogType.Error:
-        if (logEnabled || this.settings.LoggingEnabled.EnableError) {
+        if (logEnabled || LogLevel.Info == (currentLogLevel & LogLevel.Info)) {
           console.error.apply(console, valuesToLog);
         }
 
         break;
 
       case LogType.Table:
-        if (!(logEnabled || this.settings.LoggingEnabled.EnableTable)) {
+        if (!(logEnabled || LogLevel.Table == (currentLogLevel & LogLevel.Table))) {
           break;
         }
 
@@ -468,7 +895,7 @@ var Logger = function () {
         }
 
         data.forEach(function (d) {
-          var valueType = typeof d;
+          var valueType = _typeof(d);
 
           if (valueType !== 'array' && valueType !== 'object') {
             /* tslint:disable:no-console */
@@ -483,7 +910,7 @@ var Logger = function () {
 
       case LogType.Log:
       default:
-        if (logEnabled || this.settings.LoggingEnabled.EnableLog) {
+        if (logEnabled || LogLevel.Log == (currentLogLevel & LogLevel.Log)) {
           console.log.apply(console, valuesToLog);
         }
 
@@ -579,7 +1006,90 @@ var Logger = function () {
 }();
 
 exports.Logger = Logger;
-},{"../functions":"../node_modules/@spfxappdev/logger/lib/functions/index.js"}],"../node_modules/@spfxappdev/logger/lib/library/decorators/decorators.utility.js":[function(require,module,exports) {
+},{"@spfxappdev/utility":"../../node_modules/@spfxappdev/utility/lib/index.js"}],"../../src/logger/ClassLoggerBase.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ClassLoggerBase = void 0;
+
+var _Logger = require("./Logger");
+
+var __assign = void 0 && (void 0).__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+
+      for (var p in s) {
+        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      }
+    }
+
+    return t;
+  };
+
+  return __assign.apply(this, arguments);
+};
+
+var __spreadArray = void 0 && (void 0).__spreadArray || function (to, from) {
+  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) {
+    to[j] = from[i];
+  }
+
+  return to;
+};
+
+/**
+* A Base Class for Console Logger
+* For Intellisense with the @classLogger(), use this:
+* @example export interface MyClass extends ClassLoggerBase {}; export class MyClass;
+*/
+var ClassLoggerBase = function () {
+  function ClassLoggerBase() {
+    this.assignLogger();
+  }
+
+  ClassLoggerBase.prototype.log = function (logType) {
+    var _a;
+
+    var data = [];
+
+    for (var _i = 1; _i < arguments.length; _i++) {
+      data[_i - 1] = arguments[_i];
+    }
+
+    (_a = this.logger).logToConsole.apply(_a, __spreadArray([logType], data));
+  };
+
+  ClassLoggerBase.prototype.getLogCategory = function () {
+    return 'SPFxAppDev Logger BASE';
+  };
+
+  ClassLoggerBase.prototype.getLogSettings = function () {
+    return __assign({}, _Logger.Logger.DefaultSettings);
+  };
+
+  ClassLoggerBase.prototype.assignLogger = function () {
+    if (!this.logger) {
+      var loggingSettings = this.getLogSettings();
+      this.logger = new _Logger.Logger(this.getLogCategory(), loggingSettings);
+    }
+
+    return this.logger;
+  };
+
+  return ClassLoggerBase;
+}();
+
+exports.ClassLoggerBase = ClassLoggerBase;
+},{"./Logger":"../../src/logger/Logger.ts"}],"../../src/logger/IClassLogger.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+},{}],"../../src/logger/decorators/decorators.utility.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -589,30 +1099,50 @@ exports.getLogSettings = exports.getLogCategoryOrCustom = exports.logFunc = void
 
 var _Logger = require("../Logger");
 
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+var __assign = void 0 && (void 0).__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+
+      for (var p in s) {
+        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      }
+    }
+
+    return t;
+  };
+
+  return __assign.apply(this, arguments);
+};
+
 var __spreadArray = void 0 && (void 0).__spreadArray || function (to, from) {
-  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) to[j] = from[i];
+  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) {
+    to[j] = from[i];
+  }
 
   return to;
 };
 
-var logFunc = function (target, enableConsoleLogging, loggingCategory, logType) {
+var logFunc = function logFunc(target, logLevel, loggingCategory, logType) {
   var logData = [];
 
   for (var _i = 4; _i < arguments.length; _i++) {
     logData[_i - 4] = arguments[_i];
   }
 
-  var containsLogger = typeof target['logger'] === 'object'; // && (target as any).getLogger() instanceof Logger;
+  var containsLogger = _typeof(target['logger']) === 'object'; // && (target as any).getLogger() instanceof Logger;
 
-  var loggingSettings = containsLogger ? target.logger.getCurrentSettings() : _Logger.Logger.DefaultSettings;
-  loggingSettings.LoggingEnabled = enableConsoleLogging;
+  var loggingSettings = containsLogger ? target.logger.getCurrentSettings() : __assign({}, _Logger.Logger.DefaultSettings);
+  loggingSettings.LogLevel = logLevel;
   var logger = new _Logger.Logger(loggingCategory, loggingSettings);
   logger.logToConsole.apply(logger, __spreadArray([logType], logData));
 };
 
 exports.logFunc = logFunc;
 
-var getLogCategoryOrCustom = function (target, customLogCategory, fallbackValue) {
+var getLogCategoryOrCustom = function getLogCategoryOrCustom(target, customLogCategory, fallbackValue) {
   if (customLogCategory === void 0) {
     customLogCategory = null;
   }
@@ -626,7 +1156,8 @@ var getLogCategoryOrCustom = function (target, customLogCategory, fallbackValue)
   if (typeof customLogCategory === 'string') {
     loggingCategory = customLogCategory;
   } else {
-    var containsLoggingCategory = typeof target['getLogCategory'] === 'function' && typeof target.getLogCategory() === 'string';
+    var containsLoggingCategory = typeof target['getLogCategory'] === 'function' && typeof target.getLogCategory() === 'string'; // console.log("SSC", typeof target['getLogCategory'], (" loggingCategory: " +loggingCategory.slice(0) ), (" customLogCategory: " + customLogCategory));
+
     loggingCategory = containsLoggingCategory ? target.getLogCategory() : fallbackValue;
   }
 
@@ -635,12 +1166,12 @@ var getLogCategoryOrCustom = function (target, customLogCategory, fallbackValue)
 
 exports.getLogCategoryOrCustom = getLogCategoryOrCustom;
 
-var getLogSettings = function () {
+var getLogSettings = function getLogSettings() {
   return _Logger.Logger.DefaultSettings;
 };
 
 exports.getLogSettings = getLogSettings;
-},{"../Logger":"../node_modules/@spfxappdev/logger/lib/library/Logger.js"}],"../node_modules/@spfxappdev/logger/lib/library/decorators/class.decorators.js":[function(require,module,exports) {
+},{"../Logger":"../../src/logger/Logger.ts"}],"../../src/logger/decorators/class.decorators.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -657,7 +1188,9 @@ var __assign = void 0 && (void 0).__assign || function () {
     for (var s, i = 1, n = arguments.length; i < n; i++) {
       s = arguments[i];
 
-      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      for (var p in s) {
+        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      }
     }
 
     return t;
@@ -667,14 +1200,16 @@ var __assign = void 0 && (void 0).__assign || function () {
 };
 
 var __spreadArray = void 0 && (void 0).__spreadArray || function (to, from) {
-  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) to[j] = from[i];
+  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) {
+    to[j] = from[i];
+  }
 
   return to;
 };
 
 var defaultOptions = {
   customLogCategory: null,
-  enableConsoleLogging: null,
+  logLevel: null,
   override: true
 }; //TODO: Check for generic classes MyClass<T>...
 
@@ -684,25 +1219,25 @@ var defaultOptions = {
 * @example export interface MyClass extends LoggerBase {}; export class MyClass;
 */
 
-var classLogger = function (options) {
+var classLogger = function classLogger(options) {
   if (options === void 0) {
     options = null;
   }
 
   options = __assign(__assign({}, defaultOptions), options);
 
-  var classLoggerFunc = function (Base) {
+  var classLoggerFunc = function classLoggerFunc(Base) {
     // save a reference to the original constructor
     var original = Base;
     var fallbackName = original && original.name ? original.name : '';
-    var enableConsoleLogging = options.enableConsoleLogging || _Logger.Logger.DefaultSettings.LoggingEnabled;
+    var enableConsoleLogging = options.logLevel ? options.logLevel : __assign({}, _Logger.Logger.DefaultSettings).LogLevel;
     var loggingCategory = (0, _decorators.getLogCategoryOrCustom)(original, options.customLogCategory, fallbackName);
 
-    var getLogCategoryFunc = function () {
+    var getLogCategoryFunc = function getLogCategoryFunc() {
       return (0, _decorators.getLogCategoryOrCustom)(original, options.customLogCategory, fallbackName);
     };
 
-    var logFunc = function (logType) {
+    var logFunc = function logFunc(logType) {
       var logData = [];
 
       for (var _i = 1; _i < arguments.length; _i++) {
@@ -712,7 +1247,7 @@ var classLogger = function (options) {
       _decorators.logFunc.apply(void 0, __spreadArray([original, enableConsoleLogging, loggingCategory, logType], logData));
     };
 
-    var logSettingsFunc = function () {
+    var logSettingsFunc = function logSettingsFunc() {
       return (0, _decorators.getLogSettings)();
     };
 
@@ -728,7 +1263,7 @@ var classLogger = function (options) {
 
 
     function construct(classConstructor, args) {
-      var c = function () {
+      var c = function c() {
         return classConstructor.apply(this, args);
       };
 
@@ -739,7 +1274,7 @@ var classLogger = function (options) {
     } // the new constructor behaviour
 
 
-    var f = function () {
+    var f = function f() {
       var args = [];
 
       for (var _i = 0; _i < arguments.length; _i++) {
@@ -759,7 +1294,7 @@ var classLogger = function (options) {
 };
 
 exports.classLogger = classLogger;
-},{"../Logger":"../node_modules/@spfxappdev/logger/lib/library/Logger.js","./decorators.utility":"../node_modules/@spfxappdev/logger/lib/library/decorators/decorators.utility.js"}],"../node_modules/@spfxappdev/logger/lib/library/decorators/method.decorators.js":[function(require,module,exports) {
+},{"../Logger":"../../src/logger/Logger.ts","./decorators.utility":"../../src/logger/decorators/decorators.utility.ts"}],"../../src/logger/decorators/method.decorators.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -776,7 +1311,9 @@ var __assign = void 0 && (void 0).__assign || function () {
     for (var s, i = 1, n = arguments.length; i < n; i++) {
       s = arguments[i];
 
-      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      for (var p in s) {
+        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      }
     }
 
     return t;
@@ -786,17 +1323,19 @@ var __assign = void 0 && (void 0).__assign || function () {
 };
 
 var __spreadArray = void 0 && (void 0).__spreadArray || function (to, from) {
-  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) to[j] = from[i];
+  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) {
+    to[j] = from[i];
+  }
 
   return to;
 };
 
 var defaultOptions = {
   customLogCategory: null,
-  enableConsoleLogging: null
+  logLevel: null
 };
 
-var methodLogger = function (options) {
+var methodLogger = function methodLogger(options) {
   if (options === void 0) {
     options = null;
   }
@@ -806,21 +1345,31 @@ var methodLogger = function (options) {
     var originalMethod = descriptor.value;
 
     descriptor.value = function () {
-      var enableConsoleLogging = options.enableConsoleLogging || _Logger.Logger.DefaultSettings.LoggingEnabled;
+      var logLevel = options.logLevel;
       var loggingCategory = (0, _decorators.getLogCategoryOrCustom)(target, options.customLogCategory, propertyKey);
+      var containsLogLevel = typeof logLevel !== 'undefined' && logLevel !== null;
+      var targetContainsGetLogSettings = typeof target["getLogSettings"] == "function";
 
-      var logFunc = function (logType) {
+      if (!containsLogLevel && targetContainsGetLogSettings) {
+        var settings = target["getLogSettings"]();
+
+        if (settings && typeof settings["LogLevel"] == "number") {
+          logLevel = settings["LogLevel"];
+          containsLogLevel = true;
+        }
+      }
+
+      logLevel = containsLogLevel ? logLevel : _Logger.Logger.DefaultSettings.LogLevel;
+
+      var logFunc = function logFunc(logType) {
         var logData = [];
 
         for (var _i = 1; _i < arguments.length; _i++) {
           logData[_i - 1] = arguments[_i];
         }
 
-        _decorators.logFunc.apply(void 0, __spreadArray([target, enableConsoleLogging, loggingCategory, logType], logData));
+        _decorators.logFunc.apply(void 0, __spreadArray([target, logLevel, loggingCategory, logType], logData));
       };
-
-      var containsLoggingEnabled = typeof enableConsoleLogging !== 'undefined' && enableConsoleLogging !== null;
-      enableConsoleLogging = containsLoggingEnabled ? enableConsoleLogging : _Logger.Logger.DefaultSettings.LoggingEnabled;
 
       if (arguments && arguments.length > 0) {
         logFunc(_Logger.LogType.Log, [propertyKey + " START with params", arguments]);
@@ -849,7 +1398,7 @@ var methodLogger = function (options) {
 };
 
 exports.methodLogger = methodLogger;
-},{"../Logger":"../node_modules/@spfxappdev/logger/lib/library/Logger.js","./decorators.utility":"../node_modules/@spfxappdev/logger/lib/library/decorators/decorators.utility.js"}],"../node_modules/@spfxappdev/logger/lib/library/decorators/property.decorators.js":[function(require,module,exports) {
+},{"../Logger":"../../src/logger/Logger.ts","./decorators.utility":"../../src/logger/decorators/decorators.utility.ts"}],"../../src/logger/decorators/property.decorators.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -866,7 +1415,9 @@ var __assign = void 0 && (void 0).__assign || function () {
     for (var s, i = 1, n = arguments.length; i < n; i++) {
       s = arguments[i];
 
-      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      for (var p in s) {
+        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      }
     }
 
     return t;
@@ -876,49 +1427,61 @@ var __assign = void 0 && (void 0).__assign || function () {
 };
 
 var __spreadArray = void 0 && (void 0).__spreadArray || function (to, from) {
-  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) to[j] = from[i];
+  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) {
+    to[j] = from[i];
+  }
 
   return to;
 };
 
 var defaultOptions = {
   customLogCategory: null,
-  enableConsoleLogging: null
+  logLevel: null
 };
 
-var propertyLogger = function (options) {
+var propertyLogger = function propertyLogger(options) {
   if (options === void 0) {
     options = null;
   }
 
   options = __assign(__assign({}, defaultOptions), options);
   return function (target, propertyName) {
-    var enableConsoleLogging = options.enableConsoleLogging || _Logger.Logger.DefaultSettings.LoggingEnabled;
-    var loggingCategory = (0, _decorators.getLogCategoryOrCustom)(target, options.customLogCategory, target.constructor['name'] + "." + propertyName);
+    var logLevel = options.logLevel;
+    var containsLogLevel = typeof logLevel !== 'undefined' && logLevel !== null;
 
-    var logFunc = function (logType) {
+    var logFunc = function logFunc(currentInstance, logType) {
       var logData = [];
 
-      for (var _i = 1; _i < arguments.length; _i++) {
-        logData[_i - 1] = arguments[_i];
+      for (var _i = 2; _i < arguments.length; _i++) {
+        logData[_i - 2] = arguments[_i];
       }
 
-      _decorators.logFunc.apply(void 0, __spreadArray([target, enableConsoleLogging, loggingCategory, logType], logData));
-    };
+      var loggingCategory = (0, _decorators.getLogCategoryOrCustom)(currentInstance, options.customLogCategory, target.constructor['name'] + "." + propertyName);
+      var targetContainsGetLogSettings = typeof currentInstance["getLogSettings"] == "function";
 
-    var containsLoggingEnabled = typeof enableConsoleLogging !== 'undefined' && enableConsoleLogging !== null;
-    enableConsoleLogging = containsLoggingEnabled ? enableConsoleLogging : _Logger.Logger.DefaultSettings.LoggingEnabled; // property value
+      if (!containsLogLevel && targetContainsGetLogSettings) {
+        var settings = currentInstance["getLogSettings"]();
+
+        if (settings && typeof settings["LogLevel"] == "number") {
+          logLevel = settings["LogLevel"];
+          containsLogLevel = true;
+        }
+      }
+
+      _decorators.logFunc.apply(void 0, __spreadArray([target, logLevel, loggingCategory, logType], logData));
+    }; // property value
+
 
     var _val = target[propertyName]; // property getter method
 
-    var getter = function () {
-      logFunc(_Logger.LogType.Log, "Get: " + propertyName + " => " + _val);
+    var getter = function getter() {
+      logFunc(target, _Logger.LogType.Log, "Get: " + propertyName + " => " + _val);
       return _val;
     }; // property setter method
 
 
-    var setter = function (newVal) {
-      logFunc(_Logger.LogType.Log, "Set: " + propertyName + " => " + newVal);
+    var setter = function setter(newVal) {
+      logFunc(target, _Logger.LogType.Log, "Set: " + propertyName + " => " + newVal);
       _val = newVal;
     }; // Delete property.
 
@@ -936,7 +1499,7 @@ var propertyLogger = function (options) {
 };
 
 exports.propertyLogger = propertyLogger;
-},{"../Logger":"../node_modules/@spfxappdev/logger/lib/library/Logger.js","./decorators.utility":"../node_modules/@spfxappdev/logger/lib/library/decorators/decorators.utility.js"}],"../node_modules/@spfxappdev/logger/lib/library/decorators/logFactory.decorators.js":[function(require,module,exports) {
+},{"../Logger":"../../src/logger/Logger.ts","./decorators.utility":"../../src/logger/decorators/decorators.utility.ts"}],"../../src/logger/decorators/logFactory.decorators.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -953,12 +1516,12 @@ var _property = require("./property.decorators");
 var _this = void 0;
 
 // decorator factory - which calls the corresponding decorators based on arguments passed
-var log = function (options) {
+var log = function log(options) {
   if (options === void 0) {
     options = null;
   }
 
-  var factoryFunction = function () {
+  var factoryFunction = function factoryFunction() {
     var args = [];
 
     for (var _i = 0; _i < arguments.length; _i++) {
@@ -993,7 +1556,7 @@ var log = function (options) {
 };
 
 exports.log = log;
-},{"./class.decorators":"../node_modules/@spfxappdev/logger/lib/library/decorators/class.decorators.js","./method.decorators":"../node_modules/@spfxappdev/logger/lib/library/decorators/method.decorators.js","./property.decorators":"../node_modules/@spfxappdev/logger/lib/library/decorators/property.decorators.js"}],"../node_modules/@spfxappdev/logger/lib/index.js":[function(require,module,exports) {
+},{"./class.decorators":"../../src/logger/decorators/class.decorators.ts","./method.decorators":"../../src/logger/decorators/method.decorators.ts","./property.decorators":"../../src/logger/decorators/property.decorators.ts"}],"../../src/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1005,10 +1568,34 @@ Object.defineProperty(exports, "Logger", {
     return _Logger.Logger;
   }
 });
+Object.defineProperty(exports, "ILoggerSettings", {
+  enumerable: true,
+  get: function () {
+    return _Logger.ILoggerSettings;
+  }
+});
 Object.defineProperty(exports, "LogType", {
   enumerable: true,
   get: function () {
     return _Logger.LogType;
+  }
+});
+Object.defineProperty(exports, "LogLevel", {
+  enumerable: true,
+  get: function () {
+    return _Logger.LogLevel;
+  }
+});
+Object.defineProperty(exports, "ClassLoggerBase", {
+  enumerable: true,
+  get: function () {
+    return _ClassLoggerBase.ClassLoggerBase;
+  }
+});
+Object.defineProperty(exports, "IClassLogger", {
+  enumerable: true,
+  get: function () {
+    return _IClassLogger.IClassLogger;
   }
 });
 Object.defineProperty(exports, "log", {
@@ -1018,13 +1605,33 @@ Object.defineProperty(exports, "log", {
   }
 });
 
-var _Logger = require("./library/Logger");
+var _Logger = require("./logger/Logger");
 
-var _logFactory = require("./library/decorators/logFactory.decorators");
-},{"./library/Logger":"../node_modules/@spfxappdev/logger/lib/library/Logger.js","./library/decorators/logFactory.decorators":"../node_modules/@spfxappdev/logger/lib/library/decorators/logFactory.decorators.js"}],"App.ts":[function(require,module,exports) {
+var _ClassLoggerBase = require("./logger/ClassLoggerBase");
+
+var _IClassLogger = require("./logger/IClassLogger");
+
+var _logFactory = require("./logger/decorators/logFactory.decorators");
+},{"./logger/Logger":"../../src/logger/Logger.ts","./logger/ClassLoggerBase":"../../src/logger/ClassLoggerBase.ts","./logger/IClassLogger":"../../src/logger/IClassLogger.ts","./logger/decorators/logFactory.decorators":"../../src/logger/decorators/logFactory.decorators.ts"}],"App.ts":[function(require,module,exports) {
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+var __assign = this && this.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+
+      for (var p in s) {
+        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      }
+    }
+
+    return t;
+  };
+
+  return __assign.apply(this, arguments);
+};
 
 var __decorate = this && this.__decorate || function (decorators, target, key, desc) {
   var c = arguments.length,
@@ -1038,17 +1645,13 @@ var __decorate = this && this.__decorate || function (decorators, target, key, d
 
 Object.defineProperty(exports, "__esModule", {
   value: true
-});
+}); // import { Logger, ILoggerSettings, LogLevel, IClassLogger, log } from '@spfxappdev/logger';
 
-var logger_1 = require("@spfxappdev/logger"); // import { Logger, ILoggerSettings } from '../../src/index';
-// import { log } from '../../src/library/decorators/logFactory.decorators';
-// import { LoggerBase } from '../../src/library/LoggerBase';
-// import { ILogger } from '../../src/library/ILogger';
-
+var index_1 = require("../../src/index");
 
 var TestApp = function () {
   function TestApp() {
-    this.logger = new logger_1.Logger("spfxAppDev");
+    this.logger = new index_1.Logger("spfxAppDev");
   }
 
   TestApp.prototype.doThings = function () {
@@ -1077,16 +1680,9 @@ var TestApp = function () {
 var myLoggerSettings = {
   LogNamespaceUrlParameterName: 'LogOnlyMy',
   LoggingEnabledUrlParameterName: 'EnableLogging',
-  LoggingEnabled: {
-    EnableAll: false,
-    EnableError: true,
-    EnableInfo: false,
-    EnableLog: false,
-    EnableTable: false,
-    EnableWarn: true
-  }
+  LogLevel: index_1.LogLevel.Log
 };
-logger_1.Logger.DefaultSettings = myLoggerSettings;
+index_1.Logger.DefaultSettings = myLoggerSettings;
 var t = new TestApp();
 t.doThings();
 t.doThingsWithParam("Hello console logger number", 1);
@@ -1120,26 +1716,19 @@ var TestAppWithDecorators = function () {
     return {
       LogNamespaceUrlParameterName: 'LogOnly',
       LoggingEnabledUrlParameterName: 'EnableConsoleLogging',
-      LoggingEnabled: {
-        EnableAll: false,
-        EnableError: true,
-        EnableInfo: false,
-        EnableLog: true,
-        EnableTable: false,
-        EnableWarn: true
-      }
+      LogLevel: index_1.LogLevel.Log
     };
   };
 
-  __decorate([logger_1.log()], TestAppWithDecorators.prototype, "myProp", void 0);
+  __decorate([index_1.log()], TestAppWithDecorators.prototype, "myProp", void 0);
 
-  __decorate([logger_1.log()], TestAppWithDecorators.prototype, "doThings", null);
+  __decorate([index_1.log()], TestAppWithDecorators.prototype, "doThings", null);
 
-  __decorate([logger_1.log()], TestAppWithDecorators.prototype, "doThingsWithParam", null);
+  __decorate([index_1.log()], TestAppWithDecorators.prototype, "doThingsWithParam", null);
 
-  __decorate([logger_1.log()], TestAppWithDecorators.prototype, "examples", null);
+  __decorate([index_1.log()], TestAppWithDecorators.prototype, "examples", null);
 
-  TestAppWithDecorators = __decorate([logger_1.log({
+  TestAppWithDecorators = __decorate([index_1.log({
     customLogCategory: "myCustomLoggingCategory",
     override: false
   })], TestAppWithDecorators);
@@ -1150,8 +1739,25 @@ var t2 = new TestAppWithDecorators();
 t2.doThings();
 t2.doThingsWithParam("Hello console logger number", 1);
 t2.examples();
-console.log(t2 instanceof TestAppWithDecorators);
-},{"@spfxappdev/logger":"../node_modules/@spfxappdev/logger/lib/index.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+console.log(__assign(__assign({
+  LogNamespaceUrlParameterName: 'LogOnly',
+  LoggingEnabledUrlParameterName: 'EnableConsoleLogging',
+  LogLevel: index_1.LogLevel.None
+}, index_1.Logger.DefaultSettings), {
+  LogLevel: index_1.LogLevel.Error,
+  LogNamespaceUrlParameterName: "L"
+}));
+console.log(index_1.Logger.DefaultSettings); //console.log(t2 instanceof TestAppWithDecorators);
+// console.log(isset((undefined)));
+// const arr = [{a: 1, b: 2}, {a: 2, b: 1}];
+// console.log(isset((arr)));
+// console.log(arr.FirstOrDefault(i => i.a == 1));
+// console.log("a".Equals("A"));
+// const myLogLevel: LogLevel = LogLevel.Error | LogLevel.Log;
+// console.log("GeneralEnabled", !(LogLevel.None == (myLogLevel | LogLevel.None)), myLogLevel);
+// console.log("Enabled by Level", LogLevel.Table == (myLogLevel & LogLevel.Table), myLogLevel);
+// console.log(typeof myLogLevel);
+},{"../../src/index":"../../src/index.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -1179,7 +1785,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51752" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59213" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

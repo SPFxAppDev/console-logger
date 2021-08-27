@@ -1,9 +1,6 @@
-import { Logger, ILoggerSettings, log } from '@spfxappdev/logger';
-import { ILogger } from '@spfxappdev/logger/lib/library/ILogger';
-// import { Logger, ILoggerSettings } from '../../src/index';
-// import { log } from '../../src/library/decorators/logFactory.decorators';
-// import { LoggerBase } from '../../src/library/LoggerBase';
-// import { ILogger } from '../../src/library/ILogger';
+// import { Logger, ILoggerSettings, LogLevel, IClassLogger, log } from '@spfxappdev/logger';
+import { Logger, ILoggerSettings, LogLevel, IClassLogger, log, LogType } from '../../src/index';
+
 
 class TestApp {
     private logger: Logger;
@@ -36,14 +33,7 @@ class TestApp {
 const myLoggerSettings: ILoggerSettings = {
     LogNamespaceUrlParameterName: 'LogOnlyMy',
     LoggingEnabledUrlParameterName: 'EnableLogging',
-    LoggingEnabled: {
-        EnableAll: false,
-        EnableError: true,
-        EnableInfo: false,
-        EnableLog: false,
-        EnableTable: false,
-        EnableWarn: true
-    }
+    LogLevel: LogLevel.Log
 }
 
 Logger.DefaultSettings = myLoggerSettings;
@@ -54,7 +44,7 @@ t.doThingsWithParam("Hello console logger number", 1);
 t.examples();
 
 //For Intellisense with the @classLogger(), use this:
-interface TestAppWithDecorators extends ILogger { }
+interface TestAppWithDecorators extends IClassLogger { }
      
 
 @log({
@@ -92,14 +82,7 @@ class TestAppWithDecorators {
         return {
             LogNamespaceUrlParameterName: 'LogOnly',
             LoggingEnabledUrlParameterName: 'EnableConsoleLogging',
-            LoggingEnabled: {
-                EnableAll: false,
-                EnableError: true,
-                EnableInfo: false,
-                EnableLog: true,
-                EnableTable: false,
-                EnableWarn: true
-            }
+            LogLevel: LogLevel.Log,
         };
     }
 }
@@ -108,4 +91,23 @@ const t2: TestAppWithDecorators = new TestAppWithDecorators();
 t2.doThings();
 t2.doThingsWithParam("Hello console logger number", 1);
 t2.examples();
-console.log(t2 instanceof TestAppWithDecorators);
+console.log({...{
+    LogNamespaceUrlParameterName: 'LogOnly',
+    LoggingEnabledUrlParameterName: 'EnableConsoleLogging',
+    LogLevel: LogLevel.None
+}, ...Logger.DefaultSettings, ...{ LogLevel: LogLevel.Error, LogNamespaceUrlParameterName: "L" }});
+console.log(Logger.DefaultSettings);
+
+//console.log(t2 instanceof TestAppWithDecorators);
+
+// console.log(isset((undefined)));
+// const arr = [{a: 1, b: 2}, {a: 2, b: 1}];
+// console.log(isset((arr)));
+// console.log(arr.FirstOrDefault(i => i.a == 1));
+// console.log("a".Equals("A"));
+
+// const myLogLevel: LogLevel = LogLevel.Error | LogLevel.Log;
+
+// console.log("GeneralEnabled", !(LogLevel.None == (myLogLevel | LogLevel.None)), myLogLevel);
+// console.log("Enabled by Level", LogLevel.Table == (myLogLevel & LogLevel.Table), myLogLevel);
+// console.log(typeof myLogLevel);
