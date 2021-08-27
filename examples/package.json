@@ -1,11 +1,9 @@
 {
-  "dependencies": {
-    "@spfxappdev/logger": "latest"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "@spfxappdev/logger": "^1.0.2",
     "parcel-bundler": "latest",
-    "typescript": "^4.3.5",
-    "@spfxappdev/logger": "latest"
+    "typescript": "^4.3.5"
   },
   "source": " src/index.html",
   "scripts": {

@@ -2,7 +2,7 @@
 import { toBoolean, isset, isNullOrEmpty, getUrlParameter } from '@spfxappdev/utility';
 
 
-export const enum LogLevel {
+export enum LogLevel {
     None = 0,
     Log = 1 << 0,
     Info = 1 << 1,

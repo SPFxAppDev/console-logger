@@ -1,5 +1,5 @@
-// import { Logger, ILoggerSettings, LogLevel, IClassLogger, log } from '@spfxappdev/logger';
-import { Logger, ILoggerSettings, LogLevel, IClassLogger, log, LogType } from '../../src/index';
+ import { Logger, ILoggerSettings, LogLevel, IClassLogger, log, LogType } from '@spfxappdev/logger';
+//import { Logger, ILoggerSettings, LogLevel, IClassLogger, log, LogType } from '../../src/index';
 
 
 class TestApp {
@@ -94,9 +94,9 @@ t2.examples();
 console.log({...{
     LogNamespaceUrlParameterName: 'LogOnly',
     LoggingEnabledUrlParameterName: 'EnableConsoleLogging',
-    LogLevel: LogLevel.None
-}, ...Logger.DefaultSettings, ...{ LogLevel: LogLevel.Error, LogNamespaceUrlParameterName: "L" }});
-console.log(Logger.DefaultSettings);
+    LogLevel: LogLevel.Log
+}, ...Logger.DefaultSettings, ...{ LogLevel: LogLevel.Error, LogNamespaceUrlParameterName: "Lsss" }});
+
 
 //console.log(t2 instanceof TestAppWithDecorators);
 
