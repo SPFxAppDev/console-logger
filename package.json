@@ -1,6 +1,6 @@
 {
   "name": "@spfxappdev/logger",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -29,8 +29,10 @@
     "url": "https://github.com/SPFxAppDev/console-logger/issues"
   },
   "homepage": "https://github.com/SPFxAppDev/console-logger#readme",
+  "dependencies": {
+    "@spfxappdev/utility": "latest"
+  },
   "devDependencies": {
-    "@spfxappdev/utility": "^1.0.0",
     "typescript": "^4.3.5"
   }
 }

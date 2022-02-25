@@ -1,4 +1,4 @@
-import { LogType, LogLevel, Logger } from '../Logger';
+import { LogType, LogLevel } from '../Logger';
 import { getLogCategoryOrCustom, logFunc as logFuncUtil } from './decorators.utility';
 import { IPropertyLoggerDecoratorOptions } from './options.decorators';
 

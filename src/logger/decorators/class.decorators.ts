@@ -22,7 +22,7 @@ export const classLogger: (options: IClassLoggerDecoratorOptions) => any = (opti
     const classLoggerFunc: <T extends { new(...args: any[]) }>(Base: T) => any = <T extends { new(...args: any[]) }>(Base: T): any => {
         // save a reference to the original constructor
         const original: T = Base;
-        const fallbackName: string = (original as any) && (original as any).name ? (original as any).name : '';
+        const fallbackName: string = (original as any) && (original as any).name ? (original as any).name : ''; // deepscan-disable-line INSUFFICIENT_NULL_CHECK
 
         const enableConsoleLogging: LogLevel = options.logLevel ? options.logLevel : {...{}, ...Logger.DefaultSettings}.LogLevel;
         const loggingCategory: string = getLogCategoryOrCustom(original, options.customLogCategory, fallbackName);
@@ -66,7 +66,7 @@ export const classLogger: (options: IClassLoggerDecoratorOptions) => any = (opti
         };
 
         // copy prototype so intanceof operator still works
-        f.prototype = original.prototype;
+        f.prototype = original.prototype; // deepscan-disable-line INSUFFICIENT_NULL_CHECK
 
         // return new constructor (will override original)
         return f;

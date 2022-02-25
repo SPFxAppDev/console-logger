@@ -60,7 +60,7 @@ export class Logger {
     }
 
     private get isLoggingEnabledBySettings(): boolean {
-        return !(LogLevel.None == (this.settings.LogLevel | LogLevel.None))
+        return LogLevel.None != (this.settings.LogLevel | LogLevel.None);
     }
 
     private get namespacesToLogFromUrl(): string[] {
